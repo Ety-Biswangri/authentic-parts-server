@@ -18,6 +18,14 @@ async function run() {
         await client.connect();
 
         const partscollection = client.db("authentic-parts").collection("parts");
+
+        app.get('/parts', async (req, res) => {
+            const query = {};
+            const cursor = partscollection.find(query);
+            const parts = await cursor.toArray();
+
+            res.send(parts);
+        })
     }
     finally {
 
