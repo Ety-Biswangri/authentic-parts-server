@@ -34,6 +34,7 @@ async function run() {
 
         const partscollection = client.db("authentic-parts").collection("parts");
         const usersCollection = client.db("authentic-parts").collection("users");
+        const ordersCollection = client.db("authentic-parts").collection("orders");
 
         app.get('/parts', async (req, res) => {
             const query = {};
@@ -47,6 +48,7 @@ async function run() {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const part = await partscollection.findOne(query);
+
             res.send(part);
         })
 
@@ -60,7 +62,15 @@ async function run() {
             }
             const result = await usersCollection.updateOne(filter, updateDoc, options);
             const token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '2d' });
+
             res.send({ result, token });
+        })
+
+        app.post('/order', async (req, res) => {
+            const order = req.body;
+            const result = await ordersCollection.insertOne(order);
+
+            return res.send(result);
         })
     }
     finally {
