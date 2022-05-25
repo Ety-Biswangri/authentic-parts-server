@@ -51,8 +51,17 @@ async function run() {
             const query = {};
             const cursor = partscollection.find(query);
             const parts = await cursor.toArray();
+            const reverseParts = parts.reverse();
 
-            res.send(parts);
+            res.send(reverseParts);
+        })
+
+        app.get('/parts/:id', verifyJWT, async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const part = await partscollection.findOne(query);
+
+            res.send(part);
         })
 
         app.post('/parts', verifyJWT, verifyAdmin, async (req, res) => {
@@ -62,12 +71,12 @@ async function run() {
             res.send(result);
         })
 
-        app.get('/parts/:id', verifyJWT, async (req, res) => {
+        app.delete('/parts/:id', verifyJWT, verifyAdmin, async (req, res) => {
             const id = req.params.id;
-            const query = { _id: ObjectId(id) };
-            const part = await partscollection.findOne(query);
+            const filter = { _id: ObjectId(id) };
+            const result = await partscollection.deleteOne(filter);
 
-            res.send(part);
+            res.send(result);
         })
 
         // makeAdmin
