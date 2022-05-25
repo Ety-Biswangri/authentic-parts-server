@@ -55,7 +55,7 @@ async function run() {
             res.send(parts);
         })
 
-        app.post('/parts', async (req, res) => {
+        app.post('/parts', verifyJWT, verifyAdmin, async (req, res) => {
             const newProduct = req.body;
             const result = await partscollection.insertOne(newProduct);
 
