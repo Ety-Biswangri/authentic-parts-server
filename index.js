@@ -37,6 +37,7 @@ async function run() {
         const usersCollection = client.db("authentic-parts").collection("users");
         const ordersCollection = client.db("authentic-parts").collection("orders");
         const paymentsCollection = client.db("authentic-parts").collection("payments");
+        const reviewsCollection = client.db("authentic-parts").collection("reviews");
 
         const verifyAdmin = async (req, res, next) => {
             const requester = req.decoded.email;
@@ -181,6 +182,20 @@ async function run() {
             const updatedOrder = await ordersCollection.updateOne(filter, updateDoc);
 
             res.send(updateDoc);
+        })
+
+
+        app.get('/review', verifyJWT, async (req, res) => {
+            const reviews = await reviewsCollection.find().toArray();
+            const reverseReviews = reviews.reverse();
+            res.send(reviews);
+        })
+
+        app.post('/review', verifyJWT, async (req, res) => {
+            const review = req.body;
+            const result = await reviewsCollection.insertOne(review);
+
+            res.send(result);
         })
     }
     finally {
