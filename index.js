@@ -55,6 +55,13 @@ async function run() {
             res.send(parts);
         })
 
+        app.post('/parts', async (req, res) => {
+            const newProduct = req.body;
+            const result = await partscollection.insertOne(newProduct);
+
+            res.send(result);
+        })
+
         app.get('/parts/:id', verifyJWT, async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
@@ -63,6 +70,7 @@ async function run() {
             res.send(part);
         })
 
+        // makeAdmin
         app.get('/user', verifyJWT, async (req, res) => {
             const users = await usersCollection.find().toArray();
             // console.log(users)
@@ -102,6 +110,7 @@ async function run() {
             res.send({ admin: isAdmin });
         })
 
+        // purchase
         app.get('/order', verifyJWT, async (req, res) => {
             const customerEmail = req.query.customerEmail;
             const decodedEmail = req.decoded.email;
@@ -118,6 +127,7 @@ async function run() {
 
         })
 
+        // purchase
         app.post('/order', async (req, res) => {
             const order = req.body;
             const result = await ordersCollection.insertOne(order);
