@@ -36,6 +36,7 @@ async function run() {
         const partscollection = client.db("authentic-parts").collection("parts");
         const usersCollection = client.db("authentic-parts").collection("users");
         const ordersCollection = client.db("authentic-parts").collection("orders");
+        const paymentsCollection = client.db("authentic-parts").collection("payments");
 
         const verifyAdmin = async (req, res, next) => {
             const requester = req.decoded.email;
@@ -163,6 +164,23 @@ async function run() {
             const result = await ordersCollection.insertOne(order);
 
             return res.send(result);
+        })
+
+        app.patch('/order/:id', verifyJWT, async (req, res) => {
+            const id = req.params.id;
+            const payment = req.body;
+            const filter = { _id: ObjectId(id) };
+            const updateDoc = {
+                $set: {
+                    paid: true,
+                    transactionId: payment.transactionId
+                }
+            }
+
+            const result = await paymentsCollection.insertOne(payment);
+            const updatedOrder = await ordersCollection.updateOne(filter, updateDoc);
+
+            res.send(updateDoc);
         })
     }
     finally {
