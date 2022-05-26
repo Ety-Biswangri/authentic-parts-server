@@ -194,10 +194,18 @@ async function run() {
         })
 
         // manage orders
-        app.get('/orders', verifyJWT, async (req, res) => {
+        app.get('/orders', verifyJWT, verifyAdmin, async (req, res) => {
             const orders = await ordersCollection.find().toArray();
             // console.log(users)
             res.send(orders);
+        })
+
+        app.delete('/orders/:id', verifyJWT, verifyAdmin, async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const result = await ordersCollection.deleteOne(filter);
+
+            res.send(result);
         })
 
         app.get('/review', verifyJWT, async (req, res) => {
