@@ -208,7 +208,7 @@ async function run() {
             res.send(result);
         })
 
-        app.get('/review', verifyJWT, async (req, res) => {
+        app.get('/review', async (req, res) => {
             const reviews = await reviewsCollection.find().toArray();
             const reverseReviews = reviews.reverse();
             res.send(reviews);
