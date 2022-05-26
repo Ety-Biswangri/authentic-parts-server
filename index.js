@@ -221,7 +221,7 @@ async function run() {
             res.send(result);
         })
 
-        app.get('/profile/:email', async (req, res) => {
+        app.get('/profile/:email', verifyJWT, async (req, res) => {
             const email = req.params.email;
             const query = { email: email };
             const profile = await profilesCollection.findOne(query);
@@ -229,7 +229,7 @@ async function run() {
             return res.send(profile);
         })
 
-        app.put('/profile/:email', async (req, res) => {
+        app.put('/profile/:email', verifyJWT, async (req, res) => {
             const email = req.params.email;
             const profile = req.body;
             const filter = { email: email };
