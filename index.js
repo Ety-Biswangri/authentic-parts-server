@@ -38,6 +38,7 @@ async function run() {
         const ordersCollection = client.db("authentic-parts").collection("orders");
         const paymentsCollection = client.db("authentic-parts").collection("payments");
         const reviewsCollection = client.db("authentic-parts").collection("reviews");
+        const profilesCollection = client.db("authentic-parts").collection("profiles");
 
         const verifyAdmin = async (req, res, next) => {
             const requester = req.decoded.email;
@@ -151,7 +152,6 @@ async function run() {
 
         })
 
-        // myorders
         app.get('/order/:id', verifyJWT, async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
@@ -217,6 +217,36 @@ async function run() {
         app.post('/review', verifyJWT, async (req, res) => {
             const review = req.body;
             const result = await reviewsCollection.insertOne(review);
+
+            res.send(result);
+        })
+
+        app.get('/profile/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email: email };
+            const profile = await profilesCollection.findOne(query);
+
+            return res.send(profile);
+        })
+
+        app.put('/profile/:email', async (req, res) => {
+            const email = req.params.email;
+            const profile = req.body;
+            const filter = { email: email };
+            const options = { upsert: true };
+
+            // console.log(profile)
+
+            const updateDoc = {
+                $set: {
+                    education: profile.education,
+                    location: profile.location,
+                    PhoneNo: profile.PhoneNo,
+                    linkedin: profile.linkedin,
+                    blogsite: profile.blogsite
+                },
+            };
+            const result = await profilesCollection.updateOne(filter, updateDoc, options);
 
             res.send(result);
         })
