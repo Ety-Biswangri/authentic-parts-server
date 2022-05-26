@@ -134,12 +134,6 @@ async function run() {
             res.send({ admin: isAdmin });
         })
 
-        app.get('/orders', verifyJWT, async (req, res) => {
-            const orders = await ordersCollection.find().toArray();
-            // console.log(users)
-            res.send(orders);
-        })
-
         // purchase
         app.get('/order', verifyJWT, async (req, res) => {
             const customerEmail = req.query.customerEmail;
@@ -157,12 +151,21 @@ async function run() {
 
         })
 
+        // myorders
         app.get('/order/:id', verifyJWT, async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const order = await ordersCollection.findOne(query);
 
             res.send(order);
+        })
+
+        app.delete('/order/:id', verifyJWT, async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const result = await ordersCollection.deleteOne(filter);
+
+            res.send(result);
         })
 
         // purchase
@@ -190,6 +193,12 @@ async function run() {
             res.send(updateDoc);
         })
 
+        // manage orders
+        app.get('/orders', verifyJWT, async (req, res) => {
+            const orders = await ordersCollection.find().toArray();
+            // console.log(users)
+            res.send(orders);
+        })
 
         app.get('/review', verifyJWT, async (req, res) => {
             const reviews = await reviewsCollection.find().toArray();
