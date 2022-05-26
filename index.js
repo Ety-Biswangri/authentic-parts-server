@@ -134,6 +134,12 @@ async function run() {
             res.send({ admin: isAdmin });
         })
 
+        app.get('/orders', verifyJWT, async (req, res) => {
+            const orders = await ordersCollection.find().toArray();
+            // console.log(users)
+            res.send(orders);
+        })
+
         // purchase
         app.get('/order', verifyJWT, async (req, res) => {
             const customerEmail = req.query.customerEmail;
@@ -197,6 +203,7 @@ async function run() {
 
             res.send(result);
         })
+
     }
     finally {
 
